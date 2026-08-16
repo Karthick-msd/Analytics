@@ -1,0 +1,35 @@
+{{ config(
+    materialized='table',
+    cluster_by=['customer_id','signup_date_parsed'],
+) }}
+
+SELECT customer_id ,
+
+COALESCE( 
+    {{ parse_null('customer_name') }}, 
+
+    initcap(
+        trim(
+            regexp_replace(
+                split(email, '@')[0], '[._0-9]+', ' ')))
+) AS customer_name,
+
+{{parse_null('email')}} as email_id,
+
+
+case when phone rlike '[n/a]+[0-9]+\\.[0-9]+E\\+[0-9]+' then null
+else phone 
+end as phone_number,
+
+{{parse_null('city')}} as city, 
+
+{{parse_null('state')}} as state, 
+
+{{parse_null('country')}} as country, 
+
+
+{{ parse_multi_format_date('signup_date',['yyyy-MM-dd',
+'MM-dd-yyyy','MM/dd/yyyy','dd/MM/yyyy', 
+'dd-MM-yyyy','yyyy/MM/dd','MMMM d, yyyy', 'dd-MMM-yyyy']) }} as signup_date_parsed
+
+from {{source ('raw','bronze_customers')}}

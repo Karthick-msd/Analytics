@@ -1,0 +1,75 @@
+version : 2 
+
+models:
+  - name: stg_customers 
+    config:
+      post-hook:
+                - "ALTER TABLE {{ this }} 
+                  ALTER COLUMN customer_id SET MASK data_mart.governance.mask_customer_id"
+    columns: 
+      - name: customer_id 
+        tests:
+          - unique 
+          - not_null 
+      - name: customer_name 
+        tests:
+          - not_null
+      - name: email
+        tests:
+          - not_null
+          - unique
+          - dbt_utils.not_empty_string
+      - name: phone
+        tests:
+          - not_null
+      - name: city
+        tests: 
+          - not_null
+      - name: state
+        tests:
+          - not_null 
+      - name: country 
+        tests: 
+          - not_null 
+      - name: signup_date 
+        tests:
+          - not_null 
+      - name: customer_segment 
+        tests: 
+          - not_null 
+          - accepted_values: 
+              values: ['Regular','Premium','VIP']
+
+  - name: stg_employee
+    columns: 
+      - name: employee_id
+        tests: 
+          - unique
+          - not_null 
+      - name: employee_name
+        tests: 
+          - not_null
+      - name: department
+        tests: 
+          - not_null
+      - name: role 
+        tests: 
+          - not_null 
+      - name: hire_date 
+        tests: 
+          - not_null
+  - name: stg_orders
+    columns: 
+      - name: total_amount
+        tests: 
+          - not_null 
+          - dbt_utils.expression_is_true:
+             expression: "rlike '^[0-9]+(\\.[0-9]+)?$'"
+      - name: payment_method
+        tests: 
+          - not_null 
+      - name: order_status
+        tests: 
+         - accepted_values:
+              values: ['Shipped','Completed', 'Cancelled', 'Pending', 'Processing',
+                  'Refunded'] 
