@@ -8,14 +8,9 @@ order_id ,
 customer_id ,
 product_id ,
 quantity ,
-
-coalesce (
-try_to_date(order_date,'yyyy-MM-dd'),
-try_to_date(order_date, 'MM/dd/yyyy'),
-try_to_date(order_date, 'dd-MM-yyyy'),
-try_to_date(order_date, 'dd-MMM-yyyy'),
-try_to_date(order_date,'MM-dd-yyyy')
-) as order_date ,
+{{ parse_multi_format_date('order_date', ['yyyy-MM-dd',
+'MM-dd-yyyy','MM/dd/yyyy','dd/MM/yyyy', 
+'dd-MM-yyyy','yyyy/MM/dd','MMMM d, yyyy', 'dd-MMM-yyyy'])}} as order_date, 
 
 case 
 when order_status in ('NA','N/A','n/a', '-', 'null', 'na', 'none', 'unknown', '--','')

@@ -1,6 +1,8 @@
 {{ config(
     materialized='table',
     cluster_by=['customer_id','signup_date_parsed'],
+    post_hook="ALTER TABLE {{ this }} ALTER COLUMN customer_id SET MASK data_mart.governance.mask_customer_id"
+
 ) }}
 
 SELECT customer_id ,
@@ -9,6 +11,7 @@ COALESCE(
     {{ parse_null('customer_name') }}, 
 
     initcap(
+        
         trim(
             regexp_replace(
                 split(email, '@')[0], '[._0-9]+', ' ')))
@@ -32,4 +35,4 @@ end as phone_number,
 'MM-dd-yyyy','MM/dd/yyyy','dd/MM/yyyy', 
 'dd-MM-yyyy','yyyy/MM/dd','MMMM d, yyyy', 'dd-MMM-yyyy']) }} as signup_date_parsed
 
-from {{source ('raw','bronze_customers')}}
+from {{ref ('bronze_customers')}}

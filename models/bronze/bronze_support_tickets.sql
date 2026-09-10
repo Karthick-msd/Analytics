@@ -1,11 +1,13 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
+    file_format= ' delta',
+    incremental_strategy='append',
     )
 }}
-select * from read_files (
-    'dbfs:/Volumes/data_mart/source/my_volume/support_tickets.csv',
-    format => 'csv',
-    inferSchema => true,
-    header => true
-)
+
+select *,
+current_timestamp() as bronze_loaded_at,
+'{{invocation_id}}' as dbt_run_id
+from {{ ref('raw_support_tickets')}}
+

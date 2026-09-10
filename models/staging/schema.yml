@@ -1,11 +1,9 @@
 version : 2 
 
+## NEW TABLE {Customers}
+
 models:
   - name: stg_customers 
-    config:
-      post-hook:
-                - "ALTER TABLE {{ this }} 
-                  ALTER COLUMN customer_id SET MASK data_mart.governance.mask_customer_id"
     columns: 
       - name: customer_id 
         tests:
@@ -40,6 +38,7 @@ models:
           - accepted_values: 
               values: ['Regular','Premium','VIP']
 
+## NEW TABLE {Employee}
   - name: stg_employee
     columns: 
       - name: employee_id
@@ -73,3 +72,48 @@ models:
          - accepted_values:
               values: ['Shipped','Completed', 'Cancelled', 'Pending', 'Processing',
                   'Refunded'] 
+  - name: raw_hr_attendance
+    description: >
+      Delta-backed copy of the raw HR attendance CSV, ingested straight from
+      the Databricks Volume. No transformation — this exists purely to convert
+      CSV into Delta so downstream Bronze gets real file statistics.
+    config:
+      tags: ['hr_attendance', 'raw']
+      meta:
+        owner: "karthick"
+        team: "analytics_engineering"
+        contains_pii: true
+        source_system: "hr_attendance_csv_export"
+        source_file_path: "dbfs:/Volumes/data_mart/source/my_volume/hr_attendance.csv"
+    columns:
+      - name: attendance_id
+        description: Unique identifier for the attendance record.
+        data_tests:
+          - unique
+          - not_null
+      - name: employee_id
+        description: Identifier of the employee this record belongs to.
+        config:
+          meta:
+            contains_pii: true
+        data_tests:
+          - not_null
+  - name: raw_payments 
+    columns:
+      - name: amount_paid 
+        tests:
+          - not_null 
+          - dbt_utils.expression_is_true:
+             expression: "rlike '^[0-9,.]+$' or rlike '^₹?[0-9,]+(\\.[0-9]+)?$'"
+  - name: RFM
+    columns: 
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: last_ordered_date
+        tests: 
+          - not_null
+      - name: recency_days
+        tests:
+          - not_null

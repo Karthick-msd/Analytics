@@ -6,7 +6,7 @@
 }}
 
 with source as (
-select * from {{source ('raw','bronze_web_sessions')}}
+select * from {{ ref ('bronze_web_sessions')}}
 
 ),
 

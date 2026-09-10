@@ -1,3 +1,4 @@
+
 {{
   config(
     materialized='incremental',
@@ -13,4 +14,5 @@ select
     current_timestamp()            as _bronze_loaded_at,
     '{{ invocation_id }}'          as _dbt_run_id,
     '{{ this.identifier }}'        as _source_table
-from {{ ref('raw_customers') }}
+from {{ ref('raw_hr_attendance') }}
+ 
