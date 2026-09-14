@@ -1,0 +1,25 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# dbt generated files
+target/
+dbt_packages/
+logs/
+
+# Databricks
+.databricks/
+
+# VS Code
+.vscode/
+
+# Environment/secrets
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
