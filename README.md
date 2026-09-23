@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 # Data Mart 360
 
@@ -1075,4 +1075,5 @@ Try running the following commands:
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
->>>>>>> 23ecdbe372044b56d1981a2241350cc956dbff9f
+
+>>>>>>> 4661a8aec4c8102916d4431d75d1b7c929e1668c

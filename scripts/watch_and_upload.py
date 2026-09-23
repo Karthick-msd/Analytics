@@ -1,11 +1,14 @@
 import time
 import os
+from dotenv import load_dotenv
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import requests
 
+load_dotenv()
+
 DATABRICKS_WORKSPACE = "https://dbc-a00383b0-a537.cloud.databricks.com" 
-DATABRICKS_TOKEN     = "dapib0312edad683566c6e703780caf0e87c"              
+DATABRICKS_TOKEN     = os.environ["DATABRICKS_TOKEN"]              
 VOLUME_PATH          = "/Volumes/data_mart/source/my_volume" 
 WATCH_FOLDER         = "C:/Users/KARTHICKKUMAR.A/Downloads/BIZ/files"
 
