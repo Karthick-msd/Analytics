@@ -15,7 +15,9 @@ previuosly i had updated_at='signup_date_parsed'
       target_schema='silver',
       unique_key='customer_id',
       strategy='check', 
-      check_cols=['customer_name', 'email_id', 'phone_number', 'city', 'state', 'country'],
+      check_cols=['customer_name', 'email_id', 'phone_number', 'city', 'state', 'country',
+      'signup_date_parsed',
+    'customer_segment'],
       invalidate_hard_deletes=True
     )
 }}
@@ -28,7 +30,8 @@ select
     city,
     state,
     country,
-    signup_date_parsed
+    signup_date_parsed,
+    customer_segment
 from {{ ref('stg_customers') }}
 
 {% endsnapshot %} 

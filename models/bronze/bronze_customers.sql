@@ -3,6 +3,8 @@
     materialized='incremental',
     file_format='delta',
     incremental_strategy='append',
+    on_schema_change='append_new_columns'
+
   )
 }}
  
@@ -14,3 +16,7 @@ select
     '{{ invocation_id }}'          as _dbt_run_id,
     '{{ this.identifier }}'        as _source_table
 from {{ ref('raw_customers') }}
+
+{% if is_incremental() %}
+where _file_modified_at > (select coalesce(max(_file_modified_at), '1900-01-01') from {{ this }})
+{% endif %}

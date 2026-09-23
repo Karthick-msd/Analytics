@@ -1,5 +1,7 @@
 {{ config(
-    materialized='table',
+    materialized='incremental',
+    unique_key = 'customer_id',
+    incremental_strategy='merge',
     cluster_by=['customer_id','signup_date_parsed'],
     post_hook="ALTER TABLE {{ this }} ALTER COLUMN customer_id SET MASK data_mart.governance.mask_customer_id"
 
@@ -33,6 +35,12 @@ end as phone_number,
 
 {{ parse_multi_format_date('signup_date',['yyyy-MM-dd',
 'MM-dd-yyyy','MM/dd/yyyy','dd/MM/yyyy', 
-'dd-MM-yyyy','yyyy/MM/dd','MMMM d, yyyy', 'dd-MMM-yyyy']) }} as signup_date_parsed
+'dd-MM-yyyy','yyyy/MM/dd','MMMM d, yyyy', 'dd-MMM-yyyy']) }} as signup_date_parsed,
+
+customer_segment 
 
 from {{ref ('bronze_customers')}}
+
+{% if is_incremental() %}
+where _bronze_loaded_at > (select coalesce(max(_bronze_loaded_at), '1900-01-01') from {{ this }})
+{% endif %}
